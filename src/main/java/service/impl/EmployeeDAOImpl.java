@@ -1,10 +1,10 @@
 package service.impl;
 
+import model.City;
 import model.Employee;
 import service.EmployeeDAO;
 
 import java.sql.*;
-import java.util.*;
 
 public class EmployeeDAOImpl implements EmployeeDAO {
     final String user = "postgres";
@@ -16,14 +16,25 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
+    public void addCity(City city) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO city (city_name) VALUES (?)")) {
+            statement.setString(1, city.getCityName());
+            statement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void addEmployee(Employee employee) {
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO employee (id, first_name, last_name, gender, age) VALUES ((?), (?), (?), (?), (?))")) {
-            statement.setInt(1, employee.getId());
-            statement.setString(2, employee.getFirstName());
-            statement.setString(3, employee.getLastName());
-            statement.setString(4, employee.getGender());
-            statement.setInt(5, employee.getAge());
+                "INSERT INTO employee (first_name, last_name, gender, age, city_id) VALUES ((?), (?), (?), (?), (?))")) {
+            statement.setString(1, employee.getFirstName());
+            statement.setString(2, employee.getLastName());
+            statement.setString(3, employee.getGender());
+            statement.setInt(4, employee.getAge());
+            statement.setInt(5, employee.getCity().getCityID());
             statement.executeQuery();
 
         } catch (SQLException e) {
@@ -51,25 +62,25 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         return employee;
     }
 
-    @Override
-    public List<Employee> getAllEmployees() {
-        List<Employee> employeeList = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT * FROM employee")) {
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Employee employee = new Employee(Integer.parseInt(resultSet.getString("id")),
-                        resultSet.getString("first_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getString("gender"),
-                        Integer.parseInt(resultSet.getString("age")));
-                employeeList.add(employee);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeeList;
-    }
+//    @Override
+//    public List<Employee> getAllEmployees() {
+//        List<Employee> employeeList = new ArrayList<>();
+//        try (PreparedStatement statement = connection.prepareStatement(
+//                "SELECT * FROM employee")) {
+//            ResultSet resultSet = statement.executeQuery();
+//            while (resultSet.next()) {
+//                Employee employee = new Employee(Integer.parseInt(resultSet.getString("id")),
+//                        resultSet.getString("first_name"),
+//                        resultSet.getString("last_name"),
+//                        resultSet.getString("gender"),
+//                        Integer.parseInt(resultSet.getString("city_id")));
+//                employeeList.add(employee);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return employeeList;
+//    }
 
     @Override
     public void updateEmployee(int id, String firstName, String lastName, String gender, int age) {
