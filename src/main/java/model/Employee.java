@@ -1,5 +1,4 @@
 package model;
-
 import java.util.Objects;
 
 public class Employee {
@@ -78,12 +77,13 @@ public class Employee {
         this.city = city;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return id == employee.id && age == employee.age && firstName.equals(employee.firstName) && lastName.equals(employee.lastName) && gender.equals(employee.gender) && city.equals(employee.city);
+        return id == employee.id && age == employee.age && city == employee.city && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(gender, employee.gender);
     }
 
     @Override

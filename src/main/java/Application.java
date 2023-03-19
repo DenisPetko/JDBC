@@ -1,12 +1,13 @@
 import model.City;
 import model.Employee;
+import service.CityDao;
 import service.EmployeeDAO;
+import service.impl.CityDaoImpl;
 import service.impl.EmployeeDAOImpl;
 
 import java.sql.*;
 
 public class Application {
-
 
     public static void main(String[] args) throws SQLException {
         final String user = "postgres";
@@ -23,15 +24,27 @@ public class Application {
                 System.out.println("Пол: " + resultSet.getInt("age"));
                 System.out.println("id Города " + resultSet.getString("city_id"));
             }
-            EmployeeDAO employeeDAO = new EmployeeDAOImpl(connection);
-            City city = new City(4, "Тюмень");
-            employeeDAO.addCity(city);
-            Employee employee = new Employee("Дмитрий", "Бизин", "М", 30, city);
-            employeeDAO.addEmployee(employee);
-//            System.out.println(employeeDAO.getEmployeeByID(15));
-//            System.out.println(employeeDAO.getAllEmployees());
-//            employeeDAO.updateEmployee(1, "Арнольд", "Шварцнеггер", "M", 55);
-//            employeeDAO.deleteEmployee(1);
+            EmployeeDAO employeeDAO = new EmployeeDAOImpl();
+            CityDao cityDao = new CityDaoImpl();
+
+            City city = new City(27, "Краснодар");
+            cityDao.addCity(city);
+            Employee someEmployee = new Employee("Дмитрий", "Рязанский", "М", 20, city);
+            employeeDAO.addEmployee(someEmployee);
+
+            System.out.println(employeeDAO.getEmployeeByID(5));
+
+            for (Employee employee : employeeDAO.getAllEmployees()) {
+                System.out.println(employee);
+            }
+
+            City cityLA = new City(28, "LA");
+            cityDao.addCity(cityLA);
+            Employee employeeArni = new Employee("Арнольд", "Шварцнеггер", "M", 55, cityLA);
+            employeeDAO.updateEmployeeById(6, employeeArni);
+
+            employeeDAO.deleteEmployee(35);
+
         }
     }
 }
